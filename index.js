@@ -82,7 +82,19 @@ async function run() {
       res.send(result)
     })
 
-    
+    app.get('/mytoy',async(req,res) => {
+     
+      const result = await carCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.delete('/mytoy/:id',async(req,res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await carCollection.deleteOne(query)
+      res.send(result)
+    })
+
 
     await client.connect();
     // Send a ping to confirm a successful connection
