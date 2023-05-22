@@ -37,6 +37,16 @@ async function run() {
 
     })
 
+    app.get('/toys/:category',async(req,res) => {
+      
+      const category = await carCollection
+      .find({
+        category: req.params.category,
+      }).limit(2)
+      .toArray();
+    res.send(category);
+    })
+
     app.get('/alltoys',async(req,res) => {
       const cursor = carCollection.find();
       const result = await cursor.toArray();
