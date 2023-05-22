@@ -50,6 +50,40 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/mytoys',async(req,res) => {
+      let query = {};
+      if(req.query.selleremail){
+        query = {selleremail:req.query.selleremail}
+      }
+      const result = await carCollection.find(query).toArray()
+      res.send(result)
+    })
+    
+    app.get('/mytoys/:id',async(req,res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await carCollection.findOne(query)
+      res.send(result)
+    })
+
+    app.put('/mytoys/:id',async(req,res) => {
+      const id = req.params.id;
+      const updateInfo = req.body;
+      const filter ={ _id : new ObjectId(id)}
+      const options = {upsert:true};
+      const updateDoc = {
+        $set:{
+          price:updateInfo.price,
+          quantity:updateInfo.quantity,
+          description:updateInfo.description
+        }
+      }
+      const result = await carCollection.updateOne(filter,updateDoc,options)
+      res.send(result)
+    })
+
+    
+
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
