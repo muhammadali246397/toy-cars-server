@@ -28,6 +28,9 @@ async function run() {
     const database = client.db('toyCars')
     const carCollection = database.collection('carCollection')
     // Connect the client to the server	(optional starting in v4.7)
+    const indexKeys = { carname:1};
+    const indexOptions = { name: "carname" }; 
+    const result = await carCollection.createIndex(indexKeys, indexOptions);
 
     app.post('/alltoys',async(req,res) => {
       const toyinfo =req.body;
@@ -104,6 +107,24 @@ async function run() {
       const result = await carCollection.deleteOne(query)
       res.send(result)
     })
+
+    app.get('/searchcar',async(req,res) => {
+     
+      const result = await carCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.get("/searchcar/:carname", async (req, res) => {
+      const carname = req.params.carname;
+      const result = await carCollection
+        .find({
+          $or: [
+            { carname: { $regex: carname, $options: "i" } },
+          ],
+        })
+        .toArray();
+      res.send(result);
+    });
 
 
     await client.connect();
